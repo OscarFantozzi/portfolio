@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Travel Agency Dashboard</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+    </head>
+    <body class="is-preload">
+
+    <!-- Wrapper -->
+    <div id="wrapper">
+
+        <!-- Main -->
+            <div id="main">
+                <div class="inner">
+
+                    <section>
+                        <header class="major">
+                            <h3>Dashboard Travel Agency</h3>
+                        </header>
+
+                    <h4>Context</h4>
+                        <p>
+                            I undertook this project as a solution for a technical case in a job interview. 
+                            I was given an Excel dataset along with some business rules, and my task was to demonstrate an ETL (Extract, Transform, Load) process using SQL. 
+                            The final step was to effectively present the results in Power BI, showcasing my ability to handle data and create insightful visualizations.
+                        </p>
+
+                    <h4>Step 1: Understanding the data source</h4>
+
+                        <p>
+                            You can see the original data clicking <a href="https://1drv.ms/x/s!Ao89IEXROl1QiX_4rzFXlXhGl_ml?e=sfK52S">here.</a>
+                            
+                                <h4>Table SOCIOS</h4>
+                                <h4>Columns</h4>
+                                <b>MES:</b> Shows the date in "yyyymm" format.<br>
+                                <b>ID_CLIENTE:</b> Shows the customer id.<br><br>
+
+                                <h4>Table CATALOGO_PACOTES</h4>
+                                <h4>Columns</h4>
+                                <b>MES:</b> Shows the date in "yyyymm" format.<br>
+                                <b>DESC_PACOTE:</b> Describes the destination<br>
+                                <b>PRECO:</b> Describes the price of the package<br><br>
+
+                                <h4>Table RECOMENDACOES</h4>
+                                <h4>Columns</h4>
+                                <b>MES:</b> Shows the date in "yyyymm" format.<br>
+                                <b>CLIENTE:</b> Shows the customer id.<br>
+                                <b>PRECO:</b> Recommended package name<br><br>
+
+                                <h4>Table ENTRADAS_CANAIS</h4>
+                                <h4>Columns</h4>
+                                <b>MES:</b> Shows the date in "yyyymm" format.<br>
+                                <b>CLIENTE:</b> Shows the customer id.<br>
+                                <b>FLG_ENTROU_SAC:</b> Customers who contact via the customer support channel.<br>
+                                <b>FLG_ENTROU_LOJAS:</b> Customers who contacted the store directly.<br>
+                                <b>FLG_TENTATIVA_OUTBOUND:</b> Customers who contacted via Outbound Channel.<br>   
+                                <b>FLG_ATENDEU_OUTBOUND:</b> Shows whether the outbound answered the call or not.<br><br>
+                                
+                                <h4>Table VENDAS_SAC</h4>
+                                <h4>Columns</h4>
+                                <b>DATA_VENDA:</b> Shows the sale date of the customer support channel.<br>
+                                <b>CLIENTE:</b> Shows the customer id.<br>
+                                <b>PACOTES_VENDIDOS:</b> shows the quantity and destination of packages sold.<br><br>
+
+                                <h4>Table VENDAS_LOJAS</h4>
+                                <h4>Columns</h4>
+                                <b>DATA_VENDA:</b> Shows the sale date of the stores.<br>
+                                <b>CLIENTE:</b> Shows the customer id.<br>
+                                <b>PACOTES_VENDIDOS:</b> shows the quantity and destination of packages sold.<br>
+
+                                <h4>Table VENDAS_OUTBOUND</h4>
+                                <h4>Columns</h4>
+                                <b>DATA_VENDA:</b> Shows the sale date of the Outbound Channel.<br>
+                                <b>CLIENTE:</b> Shows the customer id.<br>
+                                <b>PACOTES_VENDIDOS:</b> shows the quantity and destination of packages sold.<br>
+                        </p>
+
+                    <h4>Step 2: Business rules</h4>
+
+                        <p>
+                            A Portuguese travel agency sells travel packages to various destinations, offering two types of clients:
+                        </p>
+                        <p>
+                            <strong>Members:</strong> Customers who have access to special benefits, notably discounts on the purchase of travel packages:
+                            <ul>
+                            <li>10% discount on the purchase of the 1st package of each month;</li>
+                            <li>An additional 2% discount for each extra package purchased in the same month (i.e., a 12% discount on the 2nd package, 14% on the 3rd package, etc.) - note: if the purchase of packages at different prices occurs on the same day, it is considered that the 1st packages purchased are those with the higher price.</li>
+                            </ul>
+                            To access this membership program, clients pay a monthly fee of €20. Additionally, to adhere to this membership program, clients pay a joining fee (initial amount) of €100.
+                        </p>
+                        
+                        <p>
+                            <strong>Non-Members:</strong> Customers who do not have access to special benefits, buying travel packages at the standard price.
+                        </p>
+                        
+                        <p>
+                            Additionally, the agency makes available/promotes the sale of travel packages through 3 commercial channels:
+                            <ul>
+                            <li><strong>Telemarketing Outbound:</strong> a channel that contacts customers to promote the sale of travel packages;</li>
+                            <li><strong>Customer Service Desk:</strong> channel which makes calls for customer service and clarification of doubts/problem-solving, always seeking, where possible, to promote the sale of packages;</li>
+                            <li><strong>Stores:</strong> with a similar objective to the Customer Service Desk, to promote package sales in person.</li>
+                            </ul>
+                        </p>
+                        
+                        <p>
+                            Lastly, in order to support sales in each of these channels, considering what is most interesting, taking into account the knowledge about the customer, should always be considered.
+                        </p>
+                        
+                      
+                    
+                    <h4>Step3: Business Problem</h4>
+                        <p>
+                            <strong>Question #1:</strong> How many members did the agency have per month, from December 2020 to April 2021? How many new members did it gain each month and how many did it lose?
+                            <br>To answer this question, you should use Excel, seeking to have a process that can be automatically replicated for the following months.
+                        </p>
+                        
+                        <p>
+                            <strong>Question #2:</strong> What is the amount of revenue that the travel agency managed to achieve in the months of March and April 2021?
+                            <br>To answer this question, you should use SQL, looking to have a process that can be automatically replicated for the subsequent months.
+                        </p>
+                        
+                        <p>
+                            <strong>Question #3:</strong> In April 2021, there was a significant decrease in revenue compared to the previous month. Based on the available information, what factors justify this evolution and what is their weight?
+                            <br>For each of these questions, the reasoning/intermediate steps (using, for example, Word or Excel) that allowed you to reach the presented results should be explained.
+                        </p>
+                        
+                        <p>
+                            <strong>Challenge - Travel Agency</strong>
+                        </p>
+                        
+                        <p>
+                            <strong>Challenge #1:</strong> Create a dashboard in Power BI (or an equivalent tool) to demonstrate the main data available from the travel agency:
+                            <ul>
+                            <li>Number of members and monthly variation</li>
+                            <li>Revenue from various sources each month</li>
+                            <li>Revenue evolution per month, considering the various factors that can influence it (Products, Channels, etc.)</li>
+                            </ul>
+                        </p>
+                        
+                        <p>
+                            <strong>Challenge #2:</strong> If you were asked to create a process to daily update the information from the travel agency (considering that volumes were 1000x higher than those available as an example), what tools and technologies would you suggest for creating this process? Would you be able to create a diagram of how you would structure this process?
+                        </p>
+                        
+                    <h4>Step4: Data Modeling</h4>
+
+                        The first step was to define the potential fact and dimension tables. 
+                        After that, it was necessary to process the data, extracting relevant information for the fact table and creating keys to link with the dimension tables, as well as the necessary columns according to business rules. I chose to use views that will be sent to Power BI. 
+                        You can view all the queries used for data transformation by clicking <a href= "https://1drv.ms/f/s!Ao89IEXROl1QigBMxWRPBWAD91MS?e=JrQ4Oi"> here</a>.
+
+                        <h4>Tables before modeling</h4>
+                        <img src="img/Tables_Sql.png" alt="" />
+
+                        <h4>Fact Sales after transformation</h4>
+                        <img src="img/Final_fSales.png" alt="" />
+
+                        <p>
+                            To improve performance, I decided to create the dimensions within SQL and bring all the facts and dimensions into Power BI directly.
+                            This way, I avoided creating additional data processing steps in Power Query.
+                            Additionally, the calendar table was created in Power BI to manage dates effectively.
+
+                        </p>
+
+                        <h4>Final Modeling</h4>
+                        <p>
+                            The final model was a star schema with the fact tables at the center and the dimension tables surrounding it.
+                        </p>
+
+                        <img src="img/StarSchema.png" alt="" />
+
+                    </section>
+                
+                    <h4>Step5: Data Visualization</h4>
+
+                        <p>The final step was to answer the business questions in a visual and clear manner for the end audience.
+                           At the end of each panel, access to the DAX measures used is provided.</p><br>
+
+
+                        <h4>Pane 1</h4>
+                            <img src="img/pane1.png" alt="" /><br>
+
+                            <a href= "https://1drv.ms/w/s!Ao89IEXROl1QigzaKRbQagwikHsB?e=XPEDWi"> DAX Measures</a><br><br>
+
+                        <h4>Pane 2</h4>
+
+                            <img src="img/pane2.png" alt="" /><br>
+
+                            <a href= "https://1drv.ms/w/s!Ao89IEXROl1Qig3F0765M0Etzpuw?e=zfehPz"> DAX Measures</a><br><br>
+
+                        <h4>Pane 3</h4>
+
+                        <img src="img/pane3.png" alt="" /><br>
+
+                        <a href= "https://1drv.ms/w/s!Ao89IEXROl1QihD1uXE8Fqwd41el?e=UarGdu"> DAX Measures</a><br><br>
+
+                        <h4>Pane 4</h4>
+
+                        <img src="img/pane4.png" alt="" /><br>
+
+                        <p>
+                            Panel 4 is a summary of the status of members and non-members. 
+                           Since they are straightforward measures and already detailed in other panels, I decided not to include them.
+                        </p>
+
+                        
+                            
+
+
+    </body>
+            
+                </div>
+            </div>
+    </div> 
