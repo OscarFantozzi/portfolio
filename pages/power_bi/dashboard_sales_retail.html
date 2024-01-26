@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Sales and Financial Analysis of Retail Chain</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+    </head>
+
+    <body class="is-preload">
+
+        <!-- Wrapper -->
+        <div id="wrapper">
+    
+            <!-- Main -->
+                <div id="main">
+                    <div class="inner">
+
+                        <section>
+
+                            <header class="major">
+                                <h3>Sales and Financial Analysis of Retail Chain
+                                </h3>
+                            </header>
+
+                            <h4>Context</h4>
+                                <p>
+                                    This case was an analysis of retail store sales based on a sales fact database and a financial table.
+                                    The case originated from a real company, but the data was altered for data governance reasons.
+                                </p>
+
+                            <h4>Step 1: Understanding the data source</h4>
+
+                                <p>
+                                    In this case, the data originated from an SQL database. Below, we can see the two fact tables involved in the analysis.
+                                </p>
+
+                                <img src="img/db_finance.png" alt="" />
+
+                                <br><img src="img/df_fSales.png" alt="" />
+
+                                <h4>Table f_financeiro</h4>
+                                <h4>Columns</h4>
+                                <b>ID:</b> The entry id.<br>
+                                <b>DataVenda:</b> The date of sale.<br>
+                                <b>tipo:</b> Entry type. "Receita" means Income and "Despesa" means "Expense" .<br>
+                                <b>valor:</b> Value transaction<br>
+                                <b>grupo:</b> Classification of the entry.<br>
+                                <b>subgrupo:</b> Subgroup of the entry.<br>
+                                <b>conta:</b> Account classified in the chart of accounts.<br>
+                                <b>id_cliente:</b> Customer id.<br>
+                                <b>loja:</b> Store name.<br>
+                                <b>endereco:</b> Customer Address.<br>
+                                <b>idade:</b> Customer Age.<br>
+                                <b>cpf_cnpj:</b> The customer document id.<br>
+                                <b>nacionalidade:</b> Customer Nationality.<br>
+                                <b>email:</b> Customer email.<br>
+                                <b>telefone:</b> Customer phone number.<br>
+                                <b>celular:</b> Customer mobile phone number.<br>
+                                <b>estado_civil:</b> Marital status.<br>
+                                <b>numero_dependentes:</b> Number of dependents.<br>
+                                <b>profissao:</b> Occupation.<br>
+                                <b>historico_compras:</b> Purchase History.<br>
+                                <b>numero_cartao_credito:</b> Credit Card Number.<br>
+                                <b>numero_conta_bancaria:</b> Bank Account Number.<br>
+                                <b>limite_credito:</b> Credit Limit.<br>
+                                <b>numero_identidade:</b> Identity Number.<br>
+                                <b>cidade:</b> Customer City.<br>
+                                <b>cep:</b> Postal Code.<br>
+                                <b>numero_filhos:</b> Number of Children.<br>
+                                <b>tipo_sanguineo:</b> Blood Type.<br>
+                                <b>carteira_motorista:</b> Driver's license number.<br>
+                                <b>tipo_renda:</b> Type of income.<br>
+                                <b>grau_instrucao:</b> Educational Level.<br>
+                                <b>etnia:</b> Ethnicity.<br>
+                                <b>religiao:</b> Customer Religion.<br>
+                                <b>hobbies:</b> Customer hobbies.<br><br>
+
+                                <h4>Table f_vendas</h4>
+                                <h4>Columns</h4>
+                                <b>ID:</b> The sale id.<br>
+                                <b>DataVenda:</b> The sale date.<br>
+                                <b>Produto:</b> The product name.<br>
+                                <b>Quantidade:</b>Quantity sold.<br>
+                                <b>PrecoUnitario:</b> Unit price.<br>
+                                <b>ValorTotal:</b> Total Amount.<br>
+                                <b>Desconto:</b> Discount.<br>
+                                <b>Frete:</b> Freight Amount.<br>
+                                <b>ID_Cliente:</b> The customer id.<br>
+                                <b>NomeVendedor:</b> The seller id.<br>
+                                <b>NomeLoja:</b> The store name.<br>
+                                <b>NomeCliente:</b> The customer name.<br>
+                                <b>EnderecoCliente:</b> The address id.<br>
+                                <b>TelefoneCliente:</b> The customer phone number.<br>
+                                <b>EmailCliente:</b> The customer email.<br>
+                                <b>StatusCliente:</b> The customer status. Can be "VIP" or "Common".<br><br>
+
+                                <h4>Step 2: Business Problem</h4>
+                                <p>
+                                    The customer wants to know, in the simplest way possible without complexity, the following points:
+                                </p>
+                                
+                                <br><br><strong>Sales:</strong>
+                                
+                                <ul>
+                                    <li>Which stores generate the highest revenue?</li>
+                                    <li>Which stores offer the most discounts?</li>
+                                    <li>Which salespeople generate the highest revenue?</li>
+                                    <li>Which salespeople offer the most discounts?</li>
+                                    <li>Total revenue over time?</li>
+                                    <li>How is my revenue compared to the previous year?</li>
+                                    <li>Is my revenue increasing or decreasing?</li>
+                                    <li>How is the shipping fee collection?</li>
+                                    <li>Which products sell the most?</li>
+                                </ul>
+                                
+                                <br><br><strong>Financial:</strong>
+                                
+                                <ul>
+                                    <li>How is my Revenue vs. Expenses?</li>
+                                    <li>What is the performance of the stores?</li>
+                                    <li>Are we increasing or decreasing revenues and expenses?</li>
+                                    <li>I want to better understand the sources of revenue and expenses.</li>
+                                </ul>
+                                
+                            </p>
+
+
+                            <h4>Step 3: Answering the business questions.</h4>
+
+                            <p>
+                                To answer the business questions, I performed the analysis in SQL by modeling the fact and dimension tables. Below, I provide the code.
+
+
+                            </p>
+
+
+                            <h4>Sql Queries f_vendas:</h4>
+                            <textarea rows="10" cols="50" id="codigoSQL1">
+                                -- 1 Which stores generate the most revenue?
+                                SELECT 
+                                    fv.StoreName,
+                                    FORMAT(SUM(fv.TotalValue), 'N', 'en-us') AS TotalRevenue
+                                FROM dbo.sales_table fv
+                                GROUP BY fv.StoreName ORDER BY TotalRevenue DESC
+                                
+                                -- 2 Which stores offer the most discounts?
+                                SELECT
+                                    fv.StoreName,
+                                    FORMAT(SUM(fv.Discount), 'N', 'en-us') AS TotalDiscount
+                                FROM dbo.sales_table fv
+                                GROUP BY fv.StoreName ORDER BY TotalDiscount DESC
+                                
+                                -- 3 Which salespeople generate the most revenue?
+                                SELECT 
+                                    fv.SalespersonName,
+                                    FORMAT(SUM(fv.TotalValue), 'N', 'en-us') AS SalespersonRevenue
+                                FROM dbo.sales_table fv
+                                GROUP BY fv.SalespersonName ORDER BY SalespersonRevenue DESC
+                                
+                                -- 4 Which salespeople offer the most discounts?
+                                SELECT
+                                    fv.SalespersonName,
+                                    FORMAT(SUM(fv.Discount), 'N', 'en-us')  AS SalespersonDiscount
+                                FROM dbo.sales_table fv
+                                GROUP BY fv.SalespersonName ORDER BY SalespersonDiscount DESC
+                                
+                                -- 5 Total revenue over time by Year
+                                SELECT 
+                                    YEAR(fv.SaleDate) AS Year,
+                                    FORMAT(SUM(fv.TotalValue), 'N', 'en-us') AS TotalRevenue
+                                FROM dbo.sales_table fv
+                                GROUP BY YEAR(fv.SaleDate) ORDER BY Year ASC
+                                
+                                -- 5.1 Total revenue over time by Month
+                                SELECT 
+                                    MONTH(fv.SaleDate) AS Month,
+                                    FORMAT(SUM(fv.TotalValue), 'N', 'en-us') AS TotalRevenue
+                                FROM dbo.sales_table fv
+                                GROUP BY MONTH(fv.SaleDate) ORDER BY Month ASC
+                                
+                                -- 5.2 Total revenue over time by Year and Month
+                                SELECT 
+                                    YEAR(fv.SaleDate) AS Year,
+                                    MONTH(fv.SaleDate) AS Month,
+                                    FORMAT(SUM(fv.TotalValue), 'N', 'en-us') AS TotalRevenue
+                                FROM dbo.sales_table fv
+                                GROUP BY YEAR(fv.SaleDate), MONTH(fv.SaleDate) ORDER BY Year ASC, Month ASC
+                                
+                                -- 6 Revenue compared to the previous year
+                                SELECT 
+                                    YEAR(fv.SaleDate) AS Year,
+                                    FORMAT(SUM(fv.TotalValue), 'N', 'en-us') AS TotalRevenue,
+                                    FORMAT(LAG(SUM(fv.TotalValue)) OVER(ORDER BY YEAR(fv.SaleDate)), 'N', 'en-us') AS PreviousYear,
+                                    ((LAG(SUM(fv.TotalValue)) OVER(ORDER BY YEAR(fv.SaleDate))) / SUM(fv.TotalValue)) - 1 AS YearOverYearChange
+                                FROM dbo.sales_table fv
+                                GROUP BY YEAR(fv.SaleDate) ORDER BY Year ASC
+                                
+                                -- 7 Shipping fee collection by Store
+                                SELECT  
+                                    fv.StoreName,
+                                    SUM(fv.ShippingFee) AS ShippingFee
+                                FROM dbo.sales_table fv
+                                GROUP BY fv.StoreName ORDER BY ShippingFee DESC
+                                
+                                -- 8 Top selling products
+                                SELECT TOP 10
+                                    fv.Product,
+                                    FORMAT(SUM(fv.TotalValue), 'N', 'en-us') AS ProductRevenue
+                                FROM dbo.sales_table fv
+                                GROUP BY fv.Product ORDER BY ProductRevenue DESC;
+                            </textarea>
+                        
+                            <br>
+                            <button onclick="copiarCodigo()">Copy</button><br><br>
+                        
+                            <script>
+                                function copiarCodigo() {
+                                    /* Get the text field */
+                                    var codigoSQL = document.getElementById("codigoSQL1");
+                        
+                                    /* Select the text field */
+                                    codigoSQL.select();
+                                    codigoSQL.setSelectionRange(0, 99999); /* For mobile devices */
+                        
+                                    /* Copy the text inside the text field to the clipboard */
+                                    document.execCommand("copy");
+                        
+                                    /* Alert the copied text */
+                                    alert("Copy Code: " + codigoSQL.value);
+                                }
+                            </script>
+
+                            
+                            <h4>Sql Queries f_financeiro:</h4>
+                            <textarea rows="10" cols="50" id="codigoSQL2">
+
+                                SELECT TOP 10 *
+                                FROM dbo.f_financeiro
+
+                                -- Creating a view
+                                CREATE VIEW tb_f_financeiro
+                                AS
+                                SELECT 
+                                    ff.id,
+                                    ff.date,
+                                    ff.type,
+                                    ff.value,
+                                    ff.group,
+                                    ff.subgroup,
+                                    ff.store
+                                FROM DBO.f_financeiro ff
+
+                                -- 1 How is revenue versus expenses?
+                                SELECT
+                                    ff.type,
+                                    CASE WHEN
+                                        ff.type = 'Expense' THEN FORMAT( SUM(ff.value) * -1, 'N', 'en-us')
+                                        ELSE
+                                        FORMAT( SUM(ff.value) , 'N', 'en-us')
+                                    END
+                                FROM DBO.f_financeiro ff
+                                GROUP BY ff.type
+
+                                -- 2 How is the result of the stores?
+                                SELECT
+                                    ff.store,
+                                    SUM( ff.value ) 
+                                FROM DBO.f_financeiro ff
+                                GROUP BY ff.store 
+
+                                -- 3 Analysis of expenses and revenue over time
+                                SELECT
+                                    YEAR( ff.date ) AS Year,
+                                    MONTH( ff.date ) AS Month,
+                                    ff.type, 
+                                    SUM( ff.value ) AS Value 
+                                FROM dbo.f_financeiro ff
+                                GROUP BY YEAR( ff.date ), MONTH( ff.date ), ff.type ORDER BY Year ASC, Month ASC
+
+                                -- 4 Analysis of revenue and expenses sources
+                                SELECT
+                                    ff.type,
+                                    ff.group,
+                                    FORMAT( SUM( ff.value ), 'N', 'en-us' ) AS Total_Value
+                                FROM dbo.f_financeiro ff
+                                GROUP BY ff.type, ff.group ORDER BY ff.type DESC
+
+                            </textarea>
+                            <br>
+                            <button onclick="copiarCodigo()">Copy</button><br>
+                        
+                            <script>
+                                function copiarCodigo() {
+                                    /* Get the text field */
+                                    var codigoSQL = document.getElementById("codigoSQL2");
+                        
+                                    /* Select the text field */
+                                    codigoSQL.select();
+                                    codigoSQL.setSelectionRange(0, 99999); /* For mobile devices */
+                        
+                                    /* Copy the text inside the text field to the clipboard */
+                                    document.execCommand("copy");
+                        
+                                    /* Alert the copied text */
+                                    alert("Copy Code: " + codigoSQL.value);
+                                }
+                            </script>
+
+                            <br><h4>Step 4: Data Modeling</h4>
+
+                                <p>
+                                    The modeling for this dashboard was quite simple;
+                                    I just broke down the fact table into dimensions, thus forming a star schema modeling.
+                                </p>
+
+                                <img src="img/Data_model_dashboard_retail_chain.png" >
+
+                            <br><h4>Step 5: Data Visualization</h4>
+
+                                <p>
+
+                                    In the final stage, the type of visualization was combined with the end client who wanted a simple and intuitive project
+
+                                </p>
+
+                                <img src="img/dash_pane1.png" >
+
+                                <br><a href= "https://1drv.ms/w/s!Ao89IEXROl1QihWPVPKufPz4L3sY?e=FJCtJw"> DAX Measures</a><br><br>
+
+                                <br><img src="img/Dash_pane2.png" >
+
+                                <br><a href= "https://1drv.ms/w/s!Ao89IEXROl1QihawtdyzJL09JxBI?e=89pjjv"> DAX Measures</a><br><br>
+
+
+
+
+                        </section>
+
+    </body>
+            
+                </div>
+            </div>
+    </div> 
