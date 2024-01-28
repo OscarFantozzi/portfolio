@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Analysis of Service Orders</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+    </head>
+    <body class="is-preload">
+
+            <!-- Wrapper -->
+        <div id="wrapper">
+
+            <!-- Main -->
+                <div id="main">
+                    <div class="inner">
+
+                        <section>
+                            <header class="major">
+                                <h3>Analysis of Service Orders</h3>
+                            </header>
+
+                            <h4>Context</h4>
+                                <p>
+                                    Dashboard of a page created for service monitoring. The idea is to start with one page and leave the possibility open to produce additional dashboards as per the client's needs.
+                                    The original data has been changed.
+                                </p>
+
+                            <h4>Step 1: Understanding the data source</h4>
+
+                                <img src = "img/dash_servicos.png" >
+
+                                <h4>Table f_Detalhes_Ordem_Servico</h4>
+                                <h4>Columns</h4>
+                                <b>ID_Ordem_Servico:</b> Service Order ID.<br>
+                                <b>ID_Cliente:</b> Customer ID.<br>
+                                <b>ID_Tecnico:</b> Technnician ID.<br>
+                                <b>Data_Abertura:</b> Service Order opening date.<br>
+                                <b>Data_Conclusao:</b> Service Order Closing Date.<br>
+                                <b>Cliente:</b> Customer name.<br>
+                                <b>Endereco_Cliente:</b> Customer address.<br>
+                                <b>Telefone_Cliente:</b> Customer phone number.<br>
+                                <b>Email_Cliente:</b> Customer email.<br>
+                                <b>CPF_Cliente:</b> The customer document id.<br>
+                                <b>Tecnico:</b> Technnician name.<br>
+                                <b>Endereco_Tecnico:</b> Technnician address.<br>
+                                <b>Telefone_Tecnico:</b> Technnician phone number.<br>
+                                <b>Especializacao_Tecnico:</b> Technician Specialization<br>
+                                <b>Descricao_Problema:</b> Problem description.<br>
+                                <b>Situacao:</b> Shows the service order status.<br>
+                                <b>Tipo_Servico:</b> Service Type.<br>
+                                <b>Quantidade:</b> Shows the quantity of service orders.<br>
+                                <b>Desconto:</b> Discount.<br>
+                                <b>Pecas_Necessarias:</b> Parts required to perform the service.<br>
+                                <b>Horas_Estimadas:</b> Estimated service hours.<br>
+                                <b>Valor_Total:</b> Total amount.<br>
+                                <b>Local_Servico:</b> Shows the location where service took place.<br><br>
+
+                            <h4>Step 2: Business Problem.</h4><br>
+                                
+                                <p>
+                                    Hereafter, the main questions required by the customer:
+                                </p><br>
+                                
+                                <p> 
+                                    Main Questions:
+                                    <ul>
+                                        <li>
+                                            <strong>What is the main problem you expect to solve with this Dashboard?</strong><br>
+                                            Improve the existing Dashboard with a more professional layout and add new information, with a macro analysis since the details already exist in the app.
+                                        </li>
+
+                                        <li>
+                                            <strong>Do you already have your main indicators defined?</strong><br>
+                                            Yes
+                                            Number of Service Orders, Completion Time (in days), Total Service Order Value~
+                                        </li>
+
+                                        <li>
+                                            <strong>Who will have access?</strong><br>
+                                            We will integrate the dashboard into our app so that each client can view their information. So, access will be by client.
+                                        </li>
+
+                                        <li>
+                                            <strong>What is the desired level of data granularity?</strong><br>
+                                            Day, Month, and Year
+                                            Client, technician, specialization, status, type of service
+                                        </li>
+                                        
+                                        <li>
+                                            <strong>What will be the frequency of data analysis?</strong><br>
+                                            Once a day
+                                        </li>
+
+                                        <li>
+                                            <strong>Data Availability:</strong><br>
+                                            Access to the Database
+                                        </li>
+                                        
+                                        <li>
+                                            <strong>What will be the data sources?</strong><br>
+                                            SQL Server Database
+                                        </li>
+
+                                    </ul>
+
+                            <h4>Step 3: Data Modeling</h4>
+
+                                    <p>
+                                        For this project I created views from the original database. Basically I create a fact table service orders and two dimensions: customers and technician.
+                                    </p>
+
+                                    <img src = "img/views_dash_3.png" ><br>
+
+                                    <img src = "img/schema_dash_3.png" ><br><br>
+
+
+
+                            <h4>Step 4: Data Visualization</h4>
+
+                                    <p>
+                                        In the last stage, after aligning with the client, business questions were answered on just one dashboard page.
+
+                                    </p>
+
+                                    <img src = "img/dash_3.png" ><br>
+
+                                    <a href = "https://zany-drizzle-eb3.notion.site/Dax-Measures-Dashboard-Analysis-of-Service-Orders-3fca219d9fc54d24a62e5b982878b442?pvs=4" > Dax Measures</a>
+
+
+
+
+
+                                </p>
+
+                                
+
+                        </section>     
+
+
+    </body>
+                            
+                    </div>
+                </div>
+        </div> 

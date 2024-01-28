@@ -2271,3 +2271,55 @@ button,
     border-top: 0;
     margin-top: 0;
     padding-top: 0; }
+
+    #sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0; /* Garante que a barra lateral não exceda a altura da janela de visualização */
+      width: 400px; /* Ou a largura que você preferir */
+      max-height: 100%; /* 95% da altura da janela de visualização */
+      /*overflow-y: auto; /* Permite rolagem se o conteúdo for muito longo */
+      background: #f5f6f7;
+      padding: 1em;
+      box-sizing: border-box;
+      z-index: 10;
+    }
+    
+    #main {
+      margin-left: 250px; /* Deve ser igual à largura da barra lateral para evitar sobreposição */
+    }
+    
+    /* Para esconder o botão de menu com linhas horizontais */
+    .menu-toggle {
+      display: none;
+    }
+    
+    /* Adicionar um pouco de espaço no topo para a barra lateral não cobrir o conteúdo */
+    #about-me-sidebar {
+      margin-top: 1em;
+      word-wrap: break-word; /* Ajuste conforme necessário */
+    }
+    
+    /* Ajustes para telas menores */
+    @media screen and (max-width: 736px) {
+      #sidebar {
+        position: relative;
+        width: 100%;
+        margin: 0;
+        padding: 1em;
+        max-height: none;
+      }
+    
+      #main {
+        margin-left: 0;
+      }
+    }
+    
+    /* Ajustes para telas muito pequenas */
+    @media screen and (max-width: 480px) {
+      #sidebar {
+        padding: 0.5em;
+      }
+    }
+    

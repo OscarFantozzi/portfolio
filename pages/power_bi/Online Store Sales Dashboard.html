@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            Online Store Sales Dashboard
+        </title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+    </head>
+    <body class="is-preload">
+
+    <!-- Wrapper -->
+    <div id="wrapper">
+
+        <!-- Main -->
+        <div id="main">
+            <div class="inner">
+
+                <section>
+                    <header class="major">
+                        <h3>
+                            Online Store Sales Dashboard
+                        </h3>
+                    </header>
+
+                    <h4>
+                        Context
+                    </h4>
+                        <p>
+                            Simple one-page dashboard created for an online store owner to track their key metrics. The original data has been modified.
+                        </p>
+
+                    <h4>Step 1: Understanding the data source</h4>
+
+                        <p>
+                            The database is an Excel file sent by the client as a sample of the ERP extraction. The original data has been changed.You can check the data clicking 
+                            <a href = "https://1drv.ms/x/s!Ao89IEXROl1Qih4nWXh7xv5tUSjB?e=2t17n2" >Here</a>
+                        </p>
+
+                        <img src ="img/database_excel.png" >
+
+                        <h4>
+                            Table f_Detalhes_Ordem_Servico
+                        </h4>
+                        <h4>Columns</h4>
+                        <b>Cliente:</b> The customer name.<br>
+                        <b>Produto:</b> Product name.<br>
+                        <b>Status:</b> Shows the sale Status.<br>
+                        <b>TOTAL:</b> Total Amount.<br>
+                        <b>Criação:</b> Criation order date.<br>
+                        <b>Data de fechamento:</b> Closing order date.<br>
+                        <b>Vendedor:</b>Seller name.<br>
+                        <b>Origem do lead:</b> Lead source.<br><br>
+                    
+                    <h4>Step 2: Business Problem.</h4><br>
+                                
+                        <p>
+                            Hereafter, the main questions required by the customer:
+                        </p>
+
+                        <p>
+                            <ol>
+                                <li>
+                                    <strong>What is the main problem you expect to solve with this Dashboard?</strong><br>
+                                    Monitoring Orders, with a clear view of billing, closing time, and pending orders.
+                                </li>
+                                
+                                <li>
+                                    <strong>Do you already have your key indicators defined?</strong><br>
+                                    Yes, the followings:<br>
+                                    <ul>
+                                        <li>Billing Orders</li>
+                                        <li>Number of Orders</li>
+                                        <li>Number of Open Orders</li>
+                                        <li>Average Closing Time (days)</li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <strong>Who will have access?</strong><br>
+                                    Only him (the manager)
+                                </li>
+                                
+                                <li>
+                                    <strong>What level of data granularity is desired?</strong><br>
+                                    Day / Month and Year
+                                    Product
+                                    Seller
+                                    Type of Sale
+                                    Customer
+                                    Lead Source
+                                </li>
+                                <li>
+                                    <strong>How often will these data be analyzed?</strong><br>
+                                    Weekly
+                                </li>
+
+                                <li>
+                                    <strong>Data Provision:</strong><br>
+                                    Excel spreadsheet sent by the client
+                                </li>
+                                
+                                <li>
+                                    <strong>What will be the data sources?</strong><br>
+                                    Excel?
+                                </li>
+
+                            </ol>
+                            
+                    
+                    <h4>Step 3: Data Modeling</h4>
+
+                        <p>
+                            Considering the low complexity of the data and the purpose, I chose to keep the fact table, adding only a calendar table for temporal analyses.
+
+                        </p>
+                                
+                            <img src = "img/model_dash_4.png" >
+
+                    <h4>Step 4: Data Visualization</h4>
+
+                        <p>
+                            In this section, the main requests of the project and its visions were answered.
+                         </p>
+
+                        <img src = "img/dash_4.png" ><br><br>
+
+                        <a href = "https://zany-drizzle-eb3.notion.site/Dax-Measures-Online-Store-Sales-Dashboard-9cbb5aff23954339a7c5d261493795f5?pvs=4" >DAX Measures</a>
+
+                        <h4>Filter Views</h4><br>
+                        <img = src = "img/filtros_dash4.png" >
+
+                        
+
+
+
+                                
+                    
+
+
+
+
+
+
+
+                            
+
+
+
+                        </p>
+
+
+                
+
+                </section>     
+
+
+    </body>
+                    
+            </div>
+        </div>
+    </div>
