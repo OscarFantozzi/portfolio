@@ -1,5 +1,19 @@
 @import url(fontawesome-all.min.css);
 @import url("https://fonts.googleapis.com/css?family=Open+Sans:400,600,400italic,600italic|Roboto+Slab:400,700");
+/* Arquivo estilos.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Roboto+Mono:wght@400;500;600;700&display=swap');
+
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+.code, pre {
+    font-family: 'Roboto Mono', monospace;
+    background-color: #f4f4f4;
+    padding: 10px;
+    border-radius: 5px;
+}
+
 /*
 	Editorial by HTML5 UP
 	html5up.net | @ajlkn

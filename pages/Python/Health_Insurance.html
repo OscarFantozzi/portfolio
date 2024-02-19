@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Health Insurance Cross Sell</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+    </head>
+    <body class="is-preload">
+
+    <!-- Wrapper -->
+    <div id="wrapper">
+
+        <!-- Main -->
+            <div id="main">
+                <div class="inner">
+
+                    <section>
+                        <header class="major">
+                            <h3>Health Insurance Cross Sell</h3>
+                        </header>
+
+                        <h4>
+                            Business Problem:
+                        </h4>
+                        
+                        <p>
+                            
+                            A health insurance specialized company is planning to expand its product line to include car insurance. 
+                            To identify customers who are more likely to purchase this new insurance, the company intends to apply advanced data analysis techniques. 
+                            The chosen method involves the use of binary classification algorithms, a machine learning technique, which will categorize customers into two groups: those prone to buying car insurance (identified as 1) and those who are not prone (identified as 0).
+                        </p>
+                            
+                        <p>
+                            This classification will be made based on the existing customer data, considering variables that may influence the purchase decision. 
+                            With the results of this analysis, a prioritized list of customers considered more likely to acquire car insurance will be generated. 
+                            This list will then be used by the call center team, who will contact the selected customers to offer the new insurance.
+                            
+                            The goal of this strategy is to direct marketing and sales efforts more effectively, focusing on customers with the highest potential interest in the product. This not only increases the efficiency of sales campaigns but also contributes to the reduction of operational costs, ensuring that resources are employed in an optimized and targeted manner.
+                            
+                        </p>
+                        
+                        <h4>
+                            Data Source:
+                        </h4>
+
+                        <p>
+                            The dataset was taken from the website kaggle, known for having real datasets and common everyday data analysis problems.<br>
+                            Data Source: <a href="https://github.com/OscarFantozzi/Healt_Insurance_Cross_Sell"> click here</a>
+
+                        </p>
+
+                        <h4>
+                            Tool Used:
+                        </h4>
+
+                        <p>
+                            Programming language: Python
+                        </p>
+
+                        <h4>
+                            Method and problem resolution
+                        </h4>
+
+                        <p>
+                            To solve this problem, I used the cyclical method. 
+                            The cyclical method is an iterative method consisting of several steps that are repeated and improved upon with each iteration to gradually enhance the problem's resolution. 
+                            The cyclical method prioritizes rapid delivery, and after each cycle, it allows for the improvement of results and metrics of the ML model, for example. 
+                            The steps to solve the problem were as follows:
+                        </p>
+
+                            <ul>
+                                <li>1.0 - Data Description1.0 - Data Description</li>
+                                <li>2.0 - Variable Filtering</li>
+                                <li>3.0 - Variable Filtering</li>
+                                <li>4.0 - Exploratory Data Analysis</li>
+                                <li>5.0 - Data Preparation</li>
+                                <li>6.0 - Feature Selection</li>
+                                <li>7.0 - Machine Learning Modeling</li> 
+                                <li>8.0 - Hyperparameters Fine Tuning</li>
+                                <li>9.0 - Error Translation and Interpretation</li>
+                                <li>10 - Deployment</li>
+                             
+                            </ul>
+
+                        <p>
+                            I will go into details about each of the above steps further below.
+                        </p>
+
+                        <h4>
+                            Step 1: Data Description
+                        </h4>
+
+                        <p>
+                            
+                            <ul>
+                            <li>id - Unique ID for the customer
+                            <li>Gender - Gender of the customer
+                            <li>Age - Age of the customer
+                            <li>Driving_License	0 : Customer does not have DL, 1 : Customer already has DL
+                            <li>Region_Code - Unique code for the region of the customer
+                            <li>Previously_Insured	1 : Customer already has Vehicle Insurance, 0 : Customer doesn't have Vehicle Insurance
+                            <li>Vehicle_Age	Age of the Vehicle
+                            <li>Vehicle_Damage	1 : Customer got his/her vehicle damaged in the past. 0 : Customer didn't get his/her vehicle damaged in the past.
+                            <li>Annual_Premium	- The amount customer needs to pay as premium in the year
+                            <li>Policy_Sales_Channel - Anonymised Code for the channel of outreaching to the customer ie. Different Agents, Over Mail, Over Phone, In Person, etc.
+                            <li>Vintage - Number of Days, Customer has been associated with the company
+                            </ul>
+                        </p>
+
+                        <h4>
+                            Step 2: Feature Engineering
+                        </h4>
+
+                        <p>
+                            In the Feature Engineering stage I have transformed two columns.
+                        </p>
+                        
+                        <p>
+                            <textarea rows="3" cols="5" id="vehicle age">
+                            # vehicle_age
+                            df2['vehicle_age'] = df2['vehicle_age'].apply( lambda x: 'over_2_years' if x == '> 2 Years' else 'between_1_2_years' 
+                            if x == '1-2 Year' else 'below_1_year')
+                            </textarea>
+                        
+                            <br>
+                            <button onclick="copiarCodigo()">Copy</button><br><br>
+                        
+                            <script>
+                                function copiarCodigo() {
+                                    /* Get the text field */
+                                    var code = document.getElementById("vehicle age");
+                        
+                                    /* Select the text field */
+                                    codigoSQL.select();
+                                    codigoSQL.setSelectionRange(0, 99999); /* For mobile devices */
+                        
+                                    /* Copy the text inside the text field to the clipboard */
+                                    document.execCommand("copy");
+                        
+                                    /* Alert the copied text */
+                                    alert("Copy Code: " + code.value);
+                                }
+                            </script>
+
+                            <textarea rows="3" cols="5" id="vehicle damage">
+                                # vehicle_damage
+                                df2['vehicle_damage'] = df2['vehicle_damage'].apply( lambda x : 1 if x == 'Yes' else 0 )
+
+                                </textarea>
+
+                                <br>
+                                <button onclick="copiarCodigo()">Copy</button><br><br>
+
+                                <script>
+                                    function copiarCodigo() {
+                                        /* Get the text field */
+                                        var code = document.getElementById("vehicle damage");
+
+                                        /* Select the text field */
+                                        codigoSQL.select();
+                                        codigoSQL.setSelectionRange(0, 99999); /* For mobile devices */
+
+                                        /* Copy the text inside the text field to the clipboard */
+                                        document.execCommand("copy");
+
+                                        /* Alert the copied text */
+                                        alert("Copy Code: " + code.value);
+                                    }
+                                </script>
+                            
+                        </p>
+
+                        <H4>
+                            Step 3: Variable Filtering
+                        </H4>
+
+                        <P>
+                            This step is where I generally filter the variables. However, in this first cycle I will not filter any.
+                        </P>
+
+                        <h4>
+                            Step 4: Exploratory Data Analysis
+                        </h4>
+
+                        <p>
+                            At this stage, the goal is to identify the features that significantly contribute to the model's ability to differentiate between the target classes. I will look for characteristics that effectively create a division in the feature space — a hyperplane — that assists the classification model in distinguishing between the categories. 
+                            To determine the relevance of a feature, I will examine whether there is a clear distinction between the classes when projected according to this specific feature. 
+                        </p>
+                            
+                        <p>
+                            If such separation is observed, I will consider the feature in question as important for the predictive power of the model. If there is no clear classification, this can confuse the classification instead of aiding it.
+
+                            Some important features that separate the response variable well are:
+                        </p>
+                        
+                        <h5>
+                            Age
+                        </h5>
+
+                        <img src = 'img/healt_insurance_age.png'><br><br>
+                        
+                        <h5>
+                            Vehicle Age
+                        </h5>
+                        
+                        <img src = 'img/healt_insurance_vehicle_age.png'><br><br>
+
+                        <h5>
+                            Driving License
+                        </h5>
+                        
+                        <img src = 'img/health_insurance_driving_license_chart.png'>
+
+                        <h4>
+                            Step 5: Data Preparation
+                        </h4>
+
+                        <p>
+                            During the data preparation phase, due to their distribution and range, I opted to rescale some variables:
+
+                        </p>
+                            <ul>
+                            <li>annual_premium: Rescaled due to the wide range.</li>
+
+                            <li>age: Does not follow a Gaussian distribution.</li>
+
+                            <li>vintage: Rescaled to analyze the data on the same scale.</li>
+                            </ul><br>
+
+                            For further details, please refer to the notebook in <a href = 'https://github.com/OscarFantozzi/Healt_Insurance_Cross_Sell/blob/main/pa004_Health_Insurance_cross_sell.ipynb' >step 5</a>
+
+
+                        </p>
+                      
+                    <h4>
+                        Step 6: Feature Selection
+                    </h4>
+
+                    <p>
+                        In this step, an extratree classifier was trained and the columns were chosen according to the importance of the features.
+                    </p>
+
+                    <h4>
+                        Step 7: Machine Learning
+                    </h4>
+
+                    <p>
+                        As we are dealing with a binary classification problem, the predict_proba method was used to predict the probability of the prediction belonging to class 0 or 1. 
+                        To evaluate the models, the cumulative gains curve was analyzed. 
+                        The interpretation of the curve can be consulted in more detail in the following article from <a href="https://towardsdatascience.com/meaningful-metrics-cumulative-gains-and-lyft-charts-7aac02fc5c14">Towards Data Science</a>.
+                    </p>
+
+                    <h5>
+                        Knn Cumulative Gains Curve 
+                    </h5>
+
+                    <img src = 'img/healt_insurance_cumulative_gains_curve.png'><br><br>
+
+                    <p>
+                        <b>Interpretation:</b>
+                    </p>
+
+                    <p>
+                        <ul>
+                        <li><b>Baseline:</b> Represents what one would expect if we chose samples randomly. In the image, if you select 20% of my base randomly, you would capture 20% of possible positive cases.</li>
+
+                        <li><b>Class 0:</b> Shows the percentage of class 0 cases considering a specific percentage of samples. In the example above, if I consider 20% of the samples on the x-axis "Percentage of sample," I would capture just over 20% of negative class cases.</li>
+
+                        <li><b>Class 1:</b> Shows the positive cases according to the samples considered in the base. In the image, we observe that the orange line rises linearly, if we take 40% of the base, we will have more than 80% of positive cases.</li>
+                        </ul>
+                    </p><br>
+                    
+                    <h5>
+                        Linear Regression Cumulative Gains Curve
+                    </h5>
+
+                    <img src = 'img/healt_insurance_cumulative_gains_lr.png'>
+
+                    <p>
+                        For comparison purposes, it can be observed that the Linear Regression model performs better, as it can capture 100% of the positive cases when considering approximately 50% of the dataset.
+                    </p>
+
+                    <h5>
+                        Considerations
+                    </h5>
+
+                    <p>
+                        <ul>
+                            <li>A perfect model would cause the line to rise rapidly to the top of the chart, meaning you would capture all positive cases with a small percentage of the sample.</li>
+                            <li>The higher a class's line is above the baseline, the better the model is at identifying that class.</li>
+                            <li>In the provided chart, class 1 is being captured by the model more efficiently than class 0, especially in the early segments of the sample. This means that by selecting a small percentage of the data based on the model's score, you will capture a large proportion of the positive cases of class 1.</li>
+                        </ul>
+                    </p>
+
+                    <h4>
+                        Step 8:Fine Tuning
+                    </h4>
+
+                    <p>
+                        I skipped this step in this first cycle, as I am still studying the model parameters and their implications
+                    </p>
+
+                <h4>
+                    Step 9: Results Intepretation
+                </h4>
+
+                <p>
+                    Precision and recall are metrics used to evaluate the quality of models in classification problems, including "learn to rank" problems.<br>
+                    Please refers to the <a href="https://towardsdatascience.com/accuracy-precision-recall-or-f1-331fb37c5cb9">article for more information</a>.
+                </p>
+
+                <p>
+                    Precision is the proportion of true positives in relation to the total examples that the model classified as positive. 
+                    In other words, it is a measure of how many of the examples classified as positive are actually positive. It is calculated by the formula:
+                </p><br>
+
+                <img src = 'img/precision.png'>
+
+                <p>
+                    Recall is the proportion of true positives in relation to the total number of examples that are actually positive in reality. 
+                    It measures the model's ability to find all relevant cases. The recall formula is:
+                </p><br>
+
+                <img src = 'img/recall.png'><br>
+
+                <p>
+                    In a learn to rank problem, where the goal is to rank items in an order of relevance, accumulated precision and accumulated recall can be used to evaluate the model at different levels of relevance. ranking cut. 
+                    For example, you might want to know how accurate the model is on the top 10, 20, or 2000 top-ranked items.
+                </p>
+
+                <p>
+                    <b>Precision at k</b> measures the ranking accuracy up to the kth item.<br>
+                    Therefore, it is the fraction of relevant items among the first k items.<br>
+                    <b>Recall at k</b> measures the ranking recall up to the kth item. This indicates how many relevant items are found in the first k items.<br>
+                    A function was created to know up to which kth we want to calculate the precision and recall of the ranked dataset.
+
+
+                </p>
+
+                <h4>
+                    Step 10: Deployment
+                </h4>
+
+                <p>
+                    At this stage, the class that performs all the steps and returns the predictions was created, ready to be put into production.
+                </p>
+
+
