@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Analysis of Service Orders</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="../../assets/css/main.css" />
+    </head>
+
+    <body class="is-preload">
+
+
+<!-- Wrapper -->
+<div id="wrapper">
+
+    <!-- Main -->
+    <div id="main">
+        <div class="inner">
+
+            <section>
+                <header class="major">
+                    <h3>Income Statement</h3>
+                </header>
+
+                <h4>Step 1: Explanation of the Tables</h4>
+
+                <h4>Table Descriptions</h4>
+
+                <h4>dCalendar</h4>
+                <p>The `dCalendar` table stores date information and its various temporal representations. Columns include:</p>
+                <ul>
+                    <li><b>Date:</b> Date.</li>
+                    <li><b>Year:</b> Year.</li>
+                    <li><b>MonthNum:</b> Month number.</li>
+                    <li><b>MonthAbbrev:</b> Month abbreviation.</li>
+                    <li><b>Month/Year:</b> Month/Year.</li>
+                    <li><b>HasDate:</b> Checks if there is a corresponding date in the `fBudget` table.</li>
+                </ul>
+
+                <h4>dChartOfAccounts</h4>
+                <p>The `dChartOfAccounts` table defines the chart of accounts. Columns include:</p>
+                <ul>
+                    <li><b>DescriptionLevel1:</b> Level 1 description.</li>
+                    <li><b>DescriptionLevel2:</b> Level 2 description.</li>
+                    <li><b>DetailLevel2:</b> Level 2 detail.</li>
+                    <li><b>EntryType:</b> Entry type.</li>
+                    <li><b>id:</b> Unique identifier.</li>
+                    <li><b>IncomeStatementTemplate_id:</b> Income statement template ID.</li>
+                    <li><b>Index:</b> Index.</li>
+                </ul>
+
+                <h4>dIncomeStatementShape</h4>
+                <p>The `dIncomeStatementShape` table defines the income statement structure. Columns include:</p>
+                <ul>
+                    <li><b>Branch:</b> Branch.</li>
+                    <li><b>id:</b> Unique identifier.</li>
+                    <li><b>Index:</b> Index.</li>
+                    <li><b>ManagementAccount:</b> Management account.</li>
+                    <li><b>Subtotal:</b> Subtotal.</li>
+                </ul>
+
+                <h4>fBudget</h4>
+                <p>The `fBudget` table stores budget information. Columns include:</p>
+                <ul>
+                    <li><b>AccrualDate:</b> Accrual date.</li>
+                    <li><b>Amount:</b> Amount.</li>
+                    <li><b>ChartOfAccounts_id:</b> Chart of accounts ID.</li>
+                </ul>
+
+                <h4>fForecast</h4>
+                <p>The `fForecast` table stores financial forecasts. Columns include:</p>
+                <ul>
+                    <li><b>AccrualDate:</b> Accrual date.</li>
+                    <li><b>Amount:</b> Amount.</li>
+                    <li><b>ChartOfAccounts_id:</b> Chart of accounts ID.</li>
+                </ul>
+
+                <h4>fTransactions</h4>
+                <p>The `fTransactions` table stores actual financial transactions. Columns include:</p>
+                <ul>
+                    <li><b>AccrualDate:</b> Accrual date.</li>
+                    <li><b>Amount:</b> Amount.</li>
+                    <li><b>ChartOfAccounts_id:</b> Chart of accounts ID.</li>
+                </ul>
+
+                <h4>Step 2: Data Modeling</h4>
+
+                <img src="img/income_statement_img/data_modelling.png" alt="Data Model Diagram">
+
+                <h4>fBudget Table</h4>
+                <h4>Relationships:</h4>
+                <ul>
+                    <li><b>Relationship with dChartOfAccounts:</b> 
+                        The `fBudget` table relates to the `dChartOfAccounts` table through the `ChartOfAccounts_id` column in `fBudget`, which corresponds to the `id` column in `dChartOfAccounts`. This relationship is used to associate each budget record with its respective chart of accounts.
+                    </li>
+                    <li><b>Relationship with dCalendar:</b> 
+                        The `fBudget` table relates to the `dCalendar` table through the `AccrualDate` column in `fBudget`, which corresponds to the `Date` column in `dCalendar`. This relationship allows associating each budget record with a specific calendar date.
+                    </li>
+                </ul>
+
+                <h4>fForecast Table</h4>
+                <h4>Relationships:</h4>
+                <ul>
+                    <li><b>Relationship with dChartOfAccounts:</b> 
+                        The `fForecast` table relates to the `dChartOfAccounts` table through the `ChartOfAccounts_id` column in `fForecast`, which corresponds to the `id` column in `dChartOfAccounts`. This relationship is used to associate each forecast with its respective chart of accounts.
+                    </li>
+                    <li><b>Relationship with dCalendar:</b> 
+                        The `fForecast` table relates to the `dCalendar` table through the `AccrualDate` column in `fForecast`, which corresponds to the `Date` column in `dCalendar`. This relationship allows associating each forecast with a specific calendar date.
+                    </li>
+                </ul>
+
+                <h4>fTransactions Table</h4>
+                <h4>Relationships:</h4>
+                <ul>
+                    <li><b>Relationship with dChartOfAccounts:</b> 
+                        The `fTransactions` table relates to the `dChartOfAccounts` table through the `ChartOfAccounts_id` column in `fTransactions`, which corresponds to the `id` column in `dChartOfAccounts`. This relationship is used to associate each transaction with its respective chart of accounts.
+                    </li>
+                    <li><b>Relationship with dCalendar:</b> 
+                        The `fTransactions` table relates to the `dCalendar` table through the `AccrualDate` column in `fTransactions`, which corresponds to the `Date` column in `dCalendar`. This relationship allows associating each transaction with a specific calendar date.
+                    </li>
+                </ul>
+
+                <h4>Explanation of Data Modeling</h4>
+                <p>
+                    The presented data modeling uses the star schema concept to organize fact and dimension tables, enabling efficient analysis of financial data.
+                </p>
+                <ul>
+                    <li><b>Dimension Tables (dCalendar, dChartOfAccounts, dIncomeStatementShape):</b> These tables provide detailed descriptions and hierarchies to categorize and describe fact data.</li>
+                    <li><b>Fact Tables (fBudget, fForecast, fTransactions):</b> These tables store quantitative and transactional data to be analyzed, such as budgeted, forecasted, and actual amounts.</li>
+                </ul>
+
+                <h4>Relationship between IncomeStatementTemplate and ChartOfAccounts</h4>
+                <p>
+                    The relationship between the income statement template (`IncomeStatementTemplate_id`) and the chart of accounts (`ChartOfAccounts_id`) is crucial for ensuring that financial transactions, budgets, and forecasts are correctly categorized and reported.
+                </p>
+                <ul>
+                    <li><b>Income Statement Template:</b> Defines the structure and layout of the income statement, specifying how different types of transactions should be grouped and presented. This is essential for ensuring that financial reports are consistent and understandable.</li>
+                    <li><b>Chart of Accounts:</b> Provides a detailed list of all accounts used in the company's accounting, organizing them according to the structure defined by the income statement template.</li>
+                </ul>
+                <p>
+                    By relating these two tables, we ensure that each transaction, budget, or forecast is associated with the correct category, facilitating the creation of accurate and consistent financial reports. This allows financial management to have a clear and detailed view of the company's performance at different levels and accounting categories.
+                </p>
+
+                <h4>Analysis and Storytelling</h4>
+
+                <img src="img/income_statement_img/actual_target.png" alt="Dashboard Example">
+
+                <h4>Income Statement Dashboard: "Actual vs. Target"</h4>
+                <p>
+                    This dashboard provides a comprehensive view of financial performance by comparing actual values with budgeted values for a specific period. It is divided into several key sections and components, each providing specific insights.
+                </p>
+
+                <h4>Main Sections:</h4>
+                <ul>
+                    <li><b>Top Key Indicators:</b> 
+                        <ul>
+                            <li><b>Gross Revenue:</b> Achieved vs. budgeted gross revenue, indicating the best month and variance.</li>
+                            <li><b>Net Revenue:</b> Achieved vs. budgeted net revenue, showing the net margin and variance.</li>
+                            <li><b>Operating Expenses:</b> Formatted vs. budgeted operating expenses, showing percentage variance and absolute difference.</li>
+                            <li><b>Net Income:</b> Achieved vs. budgeted net income, showing the net income margin and variance.</li>
+                        </ul>
+                    </li>
+                    <li><b>Income Statement Table:</b> 
+                        <ul>
+                            <li><b>Gross Operating Revenue:</b> Detailed by products and services.</li>
+                            <li><b>Sales Deductions:</b> Including allowances, returns, sales taxes, and unconditional discounts.</li>
+                            <li><b>Net Revenue:</b> Revenue after sales deductions.</li>
+                            <li><b>Cost of Goods Sold (COGS):</b> Detailed by the cost of goods and services provided.</li>
+                            <li><b>Gross Profit:</b> Profit after deducting COGS.</li>
+                            <li><b>Operating Expenses:</b> Detailed by administrative and commercial expenses.</li>
+                            <li><b>Financial Result:</b> Including financial expenses and income.</li>
+                            <li><b>EBITDA:</b> Earnings before interest, taxes, depreciation, and amortization.</li>
+                            <li><b>Depreciation and Amortization:</b> Depreciation and amortization.</li>
+                            <li><b>Other Income and Expenses:</b> Other income and expenses.</li>
+                            <li><b>EBIT:</b> Earnings before interest and taxes.</li>
+                            <li><b>Income Tax and Social Contribution:</b> Income tax and social contribution.</li>
+                            <li><b>Net Income:</b> Net income after all costs and expenses.</li>
+                        </ul>
+                    </li>
+                    <li><b>Charts and Analyses:</b> 
+                        <ul>
+                            <li><b>Monthly Comparison of Actual vs. Budgeted:</b> Monthly comparison of actual vs. budgeted revenue.</li>
+                            <li><b>Percentage of Actual vs. Target Achievement by Month:</b> Percentage of actual vs. target achievement by month, highlighting the worst month.</li>
+                            <li><b>Monthly Cumulative Actual vs. Target Revenue YTD:</b> Monthly cumulative actual vs. target revenue year-to-date.</li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <h4>Filters and Selections:</h4>
+                <ul>
+                    <li><b>Selections:</b> Allows selecting between budgeted and actual values.</li>
+                    <li><b>Year:</b> Allows selecting the year of interest.</li>
+                    <li><b>Month:</b> Allows selecting the specific month.</li>
+                    <li><b>Branch:</b> Allows selecting the specific branch, e.g., Florianópolis.</li>
+                </ul>
+
+                <img src="img/income_statement_img/actual_target_filters.png" alt="Analysis Example">
+
+                <h4>Income Statement Dashboard: Horizontal Analysis</h4>
+
+                <img src="img/income_statement_img/va_analysis.png" alt="Analysis Example">
+
+                <p>
+                    This dashboard provides a horizontal analysis of the income statement, allowing a month-to-month comparison of actual and budgeted values for different financial categories throughout the selected year.
+                </p>
+
+                <h4>Dashboard Components</h4>
+                <ul>
+                    <li><b>Top Key Indicators:</b> 
+                        <ul>
+                            <li><b>Dynamic Text:</b> "The best month for the year [Year] in terms of GROSS OPERATING REVENUE was [BestMonth] with [BestMonthRevenue], and the worst was [WorstMonth] with [WorstMonthRevenue]."
+                                <ul>
+                                    <li>Example in the image: "The best month for the year 2022 in terms of GROSS OPERATING REVENUE was Jun with 7,134,046, and the worst was Feb with 6,315,264."</li>
+                                </ul>
+                                This text dynamically changes based on the selected year and metric.
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <h4>Dynamic Filters</h4>
+                <ul>
+                    <li><b>Filter Selections:</b> 
+                        <ul>
+                            <li><b>Year:</b> Allows selecting the year of interest for analysis, e.g., 2022.</li>
+                            <li><b>MonthAbbrev:</b> Allows selecting multiple months for detailed analysis.</li>
+                            <li><b>Selected Account:</b> Allows selecting the specific account or metric for analysis, such as "GROSS OPERATING REVENUE."</li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <h4>Dynamic Analysis</h4>
+                <p>The dashboard is dynamic, and both the presented data and descriptive texts at the top change based on the applied filters. For example:</p>
+                <ul>
+                    <li><b>Year:</b> Changing the selected year updates the table and the top text to reflect data for the chosen year.</li>
+                    <li><b>Month:</b> Selecting different months allows detailed analysis of specific periods, adjusting the values in the table.</li>
+                    <li><b>Selected Account:</b> Changing the selected account or metric updates the analysis to focus on the new chosen metric.</li>
+                </ul>
+
+                <h4>Dynamic Text Example</h4>
+                <p>If the year filter is changed to 2023, the top text might change to:</p>
+                <ul>
+                    <li>"The best month for the year 2023 in terms of GROSS OPERATING REVENUE was July with 7,500,000, and the worst was March with 6,200,000."</li>
+                </ul>
+
+                <p>This ability to dynamically adjust the data and descriptions provides users with relevant and updated insights, facilitating decision-making based on accurate and current data.</p>
+
+                
+
+                <h4>Income Statement Dashboard: Vertical Analysis</h4>
+
+                <img src="img/income_statement_img/vertical_analysis.png" alt="Vertical Analysis Example">
+
+
+                <p>
+                    This dashboard provides a vertical analysis of the income statement, allowing a detailed comparison of monthly values and their proportions relative to the annual total for different financial categories.
+                </p>
+
+                <h4>Dashboard Components</h4>
+                <ul>
+                    <li><b>Top Key Indicators:</b> 
+                        <ul>
+                            <li><b>Dynamic Text:</b> "In [Year] in terms of = [ManagementAccount], the best month was [BestMonth] representing [BestMonthPercentage]% and the worst month was [WorstMonth] representing [WorstMonthPercentage]% of the total monthly revenue."
+                                <ul>
+                                    <li>Example in the image: "In 2022 in terms of NET REVENUE, the best month was Jan representing 73.73% and the worst month was Apr representing 73.33% of the total monthly revenue."</li>
+                                </ul>
+                                This text dynamically changes based on the selected year and metric.
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <h4>Dynamic Filters</h4>
+                <ul>
+                    <li><b>Filter Selections:</b> 
+                        <ul>
+                            <li><b>Year:</b> Allows selecting the year of interest for analysis, e.g., 2022.</li>
+                            <li><b>MonthAbbrev:</b> Allows selecting multiple months for detailed analysis.</li>
+                            <li><b>ManagementAccount:</b> Allows selecting the specific account or metric for analysis, such as "NET REVENUE."</li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <h4>Dynamic Analysis</h4>
+                <p>The dashboard is dynamic, and the visualizations change based on the applied filters:</p>
+                <ul>
+                    <li><b>Year:</b> Changing the year updates the top text and table to reflect data for the chosen year.</li>
+                    <li><b>Month:</b> Selecting different months adjusts the table to show the values and percentages for those months.</li>
+                    <li><b>Selected Account:</b> Changing the selected account or metric updates the analysis to focus on the new chosen metric.</li>
+                </ul>
+
+                <h4>Dynamic Text Example</h4>
+                <p>If the year filter is changed to 2023 and the metric to "GROSS PROFIT," the top text might change to:</p>
+                <ul>
+                    <li>"In 2023 in terms of GROSS PROFIT, the best month was July representing 15.45% and the worst month was March representing 12.34% of the total monthly revenue."</li>
+                </ul>
+
+                <p>This ability to dynamically adjust the data and descriptions provides users with relevant and updated insights, facilitating decision-making based on a detailed and accurate analysis of monthly proportions relative to the annual total.</p>
+
+                <img src="img/income_statement_img/trend_analysis.png" alt="Trend Analysis">
+
+                <p>In addition to the horizontal analysis matrix, this dashboard also offers the option to view a line chart showing the trend over time. This allows a clear visual analysis of monthly variations in the selected financial indicators.</p>
+
+                <h4>Conclusion on Vertical and Horizontal Financial Analyses</h4>
+                <p>
+                    The vertical and horizontal financial analyses presented in these dashboards provide a comprehensive and detailed view of a company's financial performance over time. Using dynamic tools that adjust data and visualizations based on selected filters, users can easily identify patterns, trends, and monthly and annual variations.
+                </p>
+
+                <h4>Benefits for Users:</h4>
+                <ul>
+                    <li><b>Deep and Detailed Insights:</b> The ability to switch between different visualizations and metrics allows a deeper understanding of specific financial components, such as revenues, expenses, profits, and operational costs.</li>
+                    <li><b>Informed Decision-Making:</b> With accurate and up-to-date analyses, managers can make informed strategic decisions, adjusting their business strategies to improve financial performance.</li>
+                    <li><b>Flexibility and Customization:</b> Dynamic filters offer flexibility, allowing users to customize the analysis according to their specific needs, whether by period, financial category, or location.</li>
+                    <li><b>Identification of Patterns and Anomalies:</b> Graphical representations, such as line charts and matrices, facilitate the quick identification of performance patterns and anomalies that may require attention or adjustments.</li>
+                </ul>
+
+                <h4>Final Message</h4>
+                <p>
+                    Using these dynamic and interactive dashboards not only simplifies financial analysis but also empowers users to act based on accurate and relevant data. Continuous and detailed analysis is essential to maintain the company's financial health and ensure that implemented strategies are aligned with growth and sustainability goals.
+                </p>
+
+                <p>This approach allows users to explore and better understand financial data, promoting more effective and data-driven management.</p>
+
+            </section>
+        </body>
+        </div>
+    </div>
+</div>
