@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Analysis of Service Orders</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+        <link rel="stylesheet" href="../../../assets/css/main.css" />
+    </head>
+<body class="is-preload">
+    <!-- Wrapper -->
+    <div id="wrapper">
+        <!-- Main -->
+        <div id="main">
+            <div class="inner">
+                <section>
+                    <header class="major">
+                        <h3>Overview</h3>
+                    </header>
+                    <p>
+                        The purpose of this project is to demonstrate how to model a purchasing datamart using the Microsoft Adventure Works 2022 test database, exclusively through SQL commands. Although there are specialized tools like SSIS and Pentaho that facilitate and automate many of the steps, the goal here is to reinforce data modeling concepts and provide a comprehensive overview of the main steps involved in this process.
+                    </p>                <h4>Main Steps</h4>
+                    <img src="../img/img1_key_steps.png" alt="Main Steps">
+                    
+                    <ol>
+                        <li>
+                            <b>Transferring Data from OLTP to the Staging Area</b>
+                            <p>The data will be extracted from the transactional database (OLTP) and transferred to a staging area. This process aims to reduce the load on the transactional database and prepare the data for transformation and cleansing.</p>
+                        </li>
+                        <li>
+                            <b>Modeling and Transformation in the Staging Area</b>
+                            <p>In the staging area, raw data will be processed and transformed. Fact and dimension tables will be modeled, performing the necessary joins. This step includes data exploration and defining the type of schema (star schema or snowflake schema, for example) to be used in the Data Warehouse (DW).</p>
+                        </li>
+                        <li>
+                            <b>Loading and Automation in the Data Warehouse (DW)</b>
+                            <p>In the Data Warehouse, tables will be created according to the schema defined in the staging step. Data will be loaded already treated and prepared for analysis. Finally, jobs and automation routines will be created to ensure regular and efficient data updates in the DW.</p>
+                        </li>
+                    </ol>
+    
+                    <h4>1. Transferring Data from OLTP to the Staging Area</h4>
+    
+                    <h5>1.1 Creating the Diagram</h5>
+                    <p>
+                        Since the goal is to model a purchasing datamart, a diagram was first created to understand how the main tables are connected and to identify the primary keys (PK) and foreign keys (FK). This provides a clear view of the current data model and helps plan the structure of the Data Warehouse.
+                    </p>
+                    <img src="../img/img2_diagram.png" alt="Creating the Diagram">
+    
+                    <h5>1.2 Creating the Staging Database</h5>
+                    <p>
+                        After creating the diagram, a database was created in the same instance that will serve as the staging area. In this database, tables will be created where the data from the tables of interest will be loaded.
+                    </p>
+                    <img src="../img/img3_stage_db.png" alt="Creating the Staging Database">
+    
+                    <p>
+                        Next, the tables will be created in the staging area and the data from the OLTP tables will be loaded into this area.
+                    </p>
+    
+                    <h5>1.3 Creating the Tables in the Staging Area</h5>
+                    <p>
+                        In this step, the tables will be created according to the following image:
+                    </p>
+                    <img src="../img/img4_creating_tables.png" alt="Creating the Tables in the Staging Area">
+    
+                    <p>
+                        First, it will be checked if the table already exists in the staging area. If it does not exist, the table will be created with columns and data types identical to those in the OLTP. At this point, assigning keys is not a concern.
+                    </p>
+                    <p>
+                        After creating or verifying, all tables will be truncated to ensure there is no old data.
+                    </p>
+                    <p>
+                        Finally, these steps will be encapsulated within a procedure that can be automated through jobs in SQL Server.
+                    </p>
+                    <p>
+                        For each table of interest, the processes of verification, creation, truncation, and data loading will be repeated. The tables of interest are:
+                    </p>
+                    <ul>
+                        <li><b>PurchaseOrderHeader</b> (loaded as shown in the image above)</li>
+                        <li><b>PurchaseOrderDetail</b></li>
+                        <li><b>ShipMethod</b></li>
+                        <li><b>Employee</b></li>
+                        <li><b>Vendor</b></li>
+                        <li><b>Product</b></li>
+                    </ul>
+                    <p>
+                        After loading all the tables, the staging area looked like this:
+                    </p>
+                    <img src="../img/img5_staging_area.png" alt="Staging Area">
+    
+                    <p>
+                        Here are all the procedures that load the data and can be automated.
+                    </p>
+                    <img src="../img/img6_st_procedures.png" alt="Procedures">
+    
+                    <h5>1.4 Creating the Loading Procedure for the Staging Area</h5>
+                    <p>
+                        In this step, a procedure will be created that loads all data from the OLTP to the staging area.
+                    </p>
+                    <img src="../img/img7_load_st.png" alt="Loading Procedure for the Staging Area">
+    
+                    <h4>2. Modeling and Transformation in the Staging Area</h4>
+                    <p>
+                        In this step, the data will be explored according to the previously created diagram, beginning with the potential facts which can be PurchaseOrderHeader_ST and PurchaseOrderDetail_ST since both have dates and represent facts, i.e., purchase history.
+                    </p>
+                    <p>
+                        By exploring the <b>PurchaseOrderHeader_ST</b> table, it was found that each row represents a complete purchase order. However, this table does not provide details of individual products but rather aggregated information such as the total invoice amount, freight, and taxes.
+                    </p>
+                    <p>
+                        To keep the fact table at the highest possible level of granularity, the values of <b>TaxAmt</b> and <b>Freight</b> were distributed (allocated) to each individual product. Thus, each row in the fact table will represent a specific product, considering that the same invoice can include multiple products.
+                    </p>
+                    <p>
+                        To achieve this, the proportion of each LineTotal (i.e., the total amount of each individual line in the invoice header) corresponding to the total invoice amount was determined. With this proportion, the share of each line in the TaxAmt and Freight values was calculated. After calculating the proportions, they were multiplied by the TaxAmt and Freight values to find the tax and freight amounts, and finally, these amounts were divided by the quantity of items purchased to determine the unit tax and freight compatible with the product granularity of the fact table.
+                    </p>
+                    <p>
+                        To calculate the Tax and Freight values proportionally to the items in the invoice, the following steps were followed:
+                    </p>
+                    <ul>
+                        <li>
+                            Determine how much each LineTotal (the total value of each individual line) represents in relation to the total invoice amount. This proportion will be used to calculate the participation of each line in the total values of TaxAmt (Tax) and Freight (Freight).
+                        </li>
+                    </ul>
+                    <img src="../img/img8_proportion.png" alt="LineTotal Calculation">
+                    <ul>
+                        <li>
+                            This proportion will be multiplied by the values of TaxAmt and Freight to obtain the specific Tax and Freight values for each line.
+                        </li>
+                    </ul>
+                    <img src="../img/img9_txamt_freight.png" alt="Tax and Freight Values">
+                    <ul>
+                        <li>
+                            These values will be divided by the quantity of items purchased in each line to find the unit Tax and Freight compatible with the product granularity in the fact table.
+                        </li>
+                    </ul>
+                    <img src="../img/img10_unitfreight_unittxamt.png" alt="Unit Tax and Freight Calculation">
+    
+                    <h4>Creating Views for Facts and Dimensions</h4>
+                    <h5>Fact Table View:</h5>
+                    <p>
+                        Only the most relevant columns for analysis will be chosen. Since it is encapsulated in a view, it is easier to add and remove columns as needed.
+                    </p>
+                    <img src="../img/img11_fact_table_view.png" alt="Fact Table View">
+    
+                    <h5>View dEmployee:</h5>
+                    <img src="../img/img12_employee_view.png" alt="View dEmployee">
+    
+                    <h5>View dProduct:</h5>
+                    <img src="../img/img13_dProduct_view.png" alt="View dProduct">
+    
+                    <h5>View dShipMethod:</h5>
+                    <img src="../img/img14_ship_method_view.png" alt="View dShipMethod">
+    
+                    <h5>View dVendor:</h5>
+                    <img src="../img/img15_vendor_view.png" alt="View dVendor">
+                    <br>
+                    <img src="../img/img16_all_views.png" alt="View dVendor Example">
+                    </br>
+                    <h5>Calendar Table</h5>
+                    <p>
+                        To create the calendar table, a table function was developed that receives the smallest and largest date from a table as parameters and constructs the table accordingly. This table will be loaded directly into Power BI through the execution of its function and will not create a table within the Staging or DW.
+                    </p>
+                    <img src="../img/img17_Calendar.png" alt="Calendar Table Function">
+                    <img src="../img/img18_function_calendar.png" alt="Calendar Table Loading">
+    
+                    <p>
+                        In this project, the main focus was on data modeling, as the data was already quite clean and organized. After creating the views, an ER model was created in Power Architect.
+                    </p>
+                    <img src="../img/img19_power_architect.png" alt="ER Model in Power Architect">
+    
+                    <h4>3. Loading and Automation in the Data Warehouse (DW)</h4>
+                    <p>
+                        Now it's time to create the DW database, its tables, and perform the first load.
+                    </p>
+                    <p>
+                        Creating the DW database.
+                    </p>
+                    <img src="../img/img20_create_dw.png" alt="Creating DW Database">
+    
+                    <p>
+                        Now, the tables will be created according to the diagram created in the previous step. In this step, the PK and FK will be established.
+                    </p>
+                    <h5>Creating the Dimension Tables:</h5>
+                    <img src="../img/img21_creating_dim.png" alt="Creating Dimension Tables">
+    
+                    <p>
+                        Note that the ID of each dimension is set as the primary key.
+                    </p>
+                    <h5>Creating the fPurchase</h5>
+                    <p>
+                        To maintain consistency when creating the keys, the following pattern was used:
+                    </p>
+                    <br>
+                    <img src="../img/img22_fpurchase_keys.png" alt="Creating fPurchase Keys">
+                    </br>
+                    <img src="../img/img23_pattern.png" alt="fPurchase Keys Pattern">
+    
+                    <p>
+                        <b> FK_ TableName_ReferencedTableName_ReferencedColumnName  FOREIGN KEY (ReferencedColumnName) REFERENCES ReferencedTableName_ReferencedColumnName</b>. This way, it is easier to identify relationships in the fPurchase table. For example, in the first line <b>In the fPurchase table</b>, the EmployeeID column is a foreign key that relates to the EmployeeID column in the dEmployee table.
+                    </p>
+                    <p>
+                        Note that the dCalendar table does not physically exist within the database; it will be created and related within Power BI.
+                    </p>
+                    <p>
+                        Now it's time to load the data from ST to DW.
+                    </p>
+                    <img src="../img/img24_load.png" alt="Load from ST to DW">
+    
+                    <p>
+                        The script above checks if the table exists in DW; if it does not exist, it creates it. After that, it performs the load through the view created in the staging area. Note that DELETE is used instead of TRUNCATE because the table is referenced with fPurchase, and if there is data in fPurchase, the dEmployee table cannot be truncated as it would violate table integrity.
+                    </p>
+                    <p>
+                        After creating the scripts, the related procedures are also created to help automate the loads by creating jobs.
+                    </p>
+                    
+    
+                    <p>
+                        All the procedures were created as shown in the image below:
+                    </p>
+                    <img src="../img/img25_procedures.png" alt="All Procedures">
+    
+                    <p>
+                        Now a procedure is created that performs the loads from ST to DW.
+                    </p>
+                    <p>
+                        Detail: Note that to be able to load without error, the fPurchase table first needs to be truncated due to the keys created to maintain database integrity. Also, note that the fPurchase load should be done last.
+                    </p>
+                    <img src="../img/IMG26_LOAD_PROCEDURES.png" alt="Procedure to Load ST to DW">
+    
+                    <h5>Creating the Job</h5>
+                    <p>
+                        Now it's time to automate the ETL by creating jobs. After the full load, a job will be created that only executes an incremental load, simulating a real scenario where only the last year is loaded, although in a real scenario it might make more sense to load only the previous day.
+                    </p>
+                    <img src="../img/IMG27_creating_job.png" alt="Creating the Job">
+    
+                    <p>
+                        Creating a step that loads the staging area.
+                    </p>
+                    <img src="../img/img28_job_full_load.png" alt="Step to Load Staging Area">
+                    <br>
+                    <img src="../img/img29_full_load.png" alt="Step to Load Staging Area Example">
+                    </br>
+                    <p>
+                        Creating a step that loads the staging area.
+                    </p>
+                    <img src="../img/img30_crating_load_step.png" alt="Step to Load Staging Area Example">
+                    </b>
+                    <img src="../img/img31_loading_steps.png" alt="Step to Load Staging Area Example">
+                    <p>
+                        The same steps are repeated, but now to load the DW.
+                    </p>
+                    <img src="../img/img32_load_dw.png" alt="Load DW Step">
+                    <img src="../img/img33_load_dw.png" alt="Load DW Step Example">
+    
+                    <p>
+                        In summary, these are the steps of the automation.
+                    </p>
+                    <img src="../img/img34_automation_steps.png" alt="Automation Steps">
+    
+                    <h5>Testing to Ensure Everything Runs Properly</h5>
+                    <img src="../img/img35_autmation.png" alt="Testing">
+                    <br>
+                    <img src="../img/img36_automation.png" alt="Testing Example">
+                    <br/>
+                    <h5>Validating the Number of Rows Transferred from ST to DW</h5>
+                    <p>
+                        In the image below, the number of rows in the ST:
+                    </p>
+                    <img src="../img/img37_validating.png" alt="Rows in ST">
+                    <p>
+                        And comparing it with the number of rows in the DW:
+                    </p>
+                    <img src="../img/img38_validating.png" alt="Rows in DW">
+    
+                    <h5>Performing an Incremental Load</h5>
+                    <p>
+                        To simulate an incremental load, the last year will be deleted from the fPurchase table in the DW.
+                    </p>
+                    <img src="../img/img39_validating.png" alt="Deleting Last Year">
+                    <br>
+                    <img src="../img/img40_validating.png" alt="Deleting Last Year Example">
+                    <br/>
+                    <p>
+                        Checking the largest date after deleting the rows.
+                    </p>
+                    <img src="../img/img41_deleting_rows.png" alt="Checking Largest Date">
+    
+                    <p>
+                        Now the largest year is 2013.
+                    </p>
+                    <p>
+                        For the incremental load, the logic is that only the data larger than the last date will be loaded.
+                    </p>
+                    <img src="../img/img42_deleting_rows.png" alt="Loading Data Larger than Last Date">
+    
+                    <p>
+                        Thus, the already created procedure for full load can be altered by creating a parameter that will check if the load will be incremental or not.
+                    </p>
+                    <p>
+                        First, an incremental parameter is added to the procedure.
+                    </p>
+                    <img src="../img/img43_parameter.png" alt="Adding Incremental Parameter">
+                    <br>
+                    <img src="../img/img44_deleting_rows.png" alt="Incremental Parameter Example">
+                    <br/>
+                    <p>
+                        The logic is that if the selected parameter is 0, the load will be full; otherwise, if incremental is 1, the load will be incremental.
+                    </p>
+                    <p>
+                        Testing now when the parameter is 0.
+                    </p>
+                    <img src="../img/img45.png" alt="Testing Parameter 0">
+    
+                    <p>
+                        When it is 0, it loads only 8,845 rows, as expected. Testing now when the incremental is equal to 1.
+                    </p>
+                    <img src="../img/IMG46.png" alt="Testing Parameter 1">
+    
+                    <p>
+                        As expected, when the incremental is 1, it falls into the ELSE of the IF, loading only the data larger than the largest order date in the DW.
+                    </p>
+    
+                    <h5>Editing the JOBS:</h5>
+                    <img src="../img/img47.png" alt="Changing the JOBS">
+    
+                    <p>
+                        For the FULL_LOAD load, just insert the parameter 0 and change the procedure.
+                    </p>
+                    <p>
+                        And for the incremental load, the same procedure is used, but the parameter is set to 1 and the dimension loads and the table truncate are commented out. As there is already data in the dimensions, running the procedures will give an error. Additionally, the fPurchase table cannot be truncated as the largest date from it is needed.
+                    </p>
+                    <img src="../img/img48.png" alt="Incremental Load Procedure">
+    
+                    <p>
+                        In the job, the created procedure is run.
+                    </p>
+                    <img src="../img/img49.png" alt="Running Created Procedure">
+    
+                    <h5>Final Test</h5>
+                    <p>
+                        1. Performing the full incremental load.
+                    </p>
+                    <img src="../img/img50.png" alt="Full Incremental Load">
+    
+                    <p>
+                        2. Deleting the year 2014 from the database.
+                    </p>
+                    <img src="../img/img51.png" alt="Deleting Year 2014">
+                    <br>
+                    <img src="../img/img52.png" alt="Deleting Year 2014 Example">
+                    <br/>
+                    <p>
+                        After deletion, there are 3,567 rows.
+                    </p>
+                    <img src="../img/img53.png" alt="Deleting Year 2014 Example">
+                    <p>
+                        3. Performing the incremental load.
+                    </p>
+                    <img src="../img/img54.png" alt="Performing Incremental Load">
+    
+                    <p>
+                        4. Checking the number of rows again.
+                    </p>
+                    <img src="../img/img55.png" alt="Checking Rows Again">
+    
+                    <p>
+                        Noting that only the rows for the year 2014 are loaded.
+                    </p>
+    
+                    <h4>After Creating the Datamart, Bringing the Information to Power BI</h4>
+                    <p>
+                        Importing the tables and also the function to create the calendar table.
+                    </p>
+                    <img src="../img/img56.png" alt="Importing Tables to Power BI">
+    
+                    <p>
+                        Also importing the calendar creation function.
+                    </p>
+                    <img src="../img/img57.png" alt="Importing Calendar Creation Function">
+                    <img src="../img/img58.png" alt="Importing Calendar Creation Function Example">
+    
+                    <p>
+                        To make it dynamic.
+                    </p>
+                    <img src="../img/img59.png" alt="Making Dynamic">
+                    <br>
+                    <img src="../img/img60.png" alt="Making Dynamic Example">
+                    <br/>
+                    <p>
+                        Finally, this is the final model.
+                    </p>
+    
+                    <img src="../img/img61.png" alt="Final Model">
+    
+                    <h4>Conclusions</h4>
+                    <p>
+                        This simple project shows how to model a datamart using only SQL code from extracting from the transactional database to consumption in Power BI. The focus was not so much on data treatment, as other projects will focus on that, but on the ETL step-by-step, modeling, and automation. Obviously, in a real scenario, there would be data and databases that may not be so organized, but the step-by-step process could indeed, with some caveats, be replicated for a small business environment. For larger projects, it is necessary to use more robust tools such as Pentaho and SSIS to have greater control over the steps.
+                    </p>
+                </section>
+            </div>
+        </div>
+    </div>
+</body>
+</html>    
